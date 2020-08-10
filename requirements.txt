@@ -1,0 +1,7 @@
+beautifulsoup4
+requests
+OpenCC
+sqlitedict
+Cython
+# cld3
+https://github.com/Elizafox/cld3/archive/master.zip
