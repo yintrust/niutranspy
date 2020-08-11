@@ -3,6 +3,8 @@ from typing import Dict, Union, Tuple
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from niutranspy.utils import strip_soup_text
+
 
 class _TranslationBackend(object):
     def __call__(self, src_text: str, from_lang: str, to_lang: str, cache: Dict[str, str],

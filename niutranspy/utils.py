@@ -1,32 +1,27 @@
 import json
 import logging
 import threading
-from typing import Tuple
 from itertools import count
 from time import sleep
+from typing import Tuple
 
 import cld3
 from bs4 import BeautifulSoup
-from sqlitedict import SqliteDict
 from bs4.element import NavigableString, Tag
+from sqlitedict import SqliteDict
+
+from niutranspy.constants import _INLINE_ELEMENTS
 
 _caches = {}
 _old_caches = {}
 _log = logging.getLogger(__name__)
 _lock = threading.RLock()
-_INLINE_ELEMENTS = {
-    'a', 'abbr', 'acronym', 'b', 'bdo', 'big', 'br', 'button', 'cite', 'code',
-    'dfn', 'em', 'i', 'img', 'input', 'kbd', 'label', 'map', 'object',
-    'q', 'samp', 'script', 'select', 'small', 'span', 'strong',
-    'sub', 'sup', 'textarea', 'tt', 'var'
-}
 
 
 def get_text_contents(soup) -> str:
     """Get plain text in BeautifulSoup object.
 
     :param soup: BeautifulSoup object.
-    :type soup: BeautifulSoup object
     :return: Text string.
     """
     if not soup: return ''  # noqa: E701
@@ -60,14 +55,24 @@ def _load_dicts(filename, from_lang, to_lang):
 
 
 def get_lang(s: str, proportion: float = 0.8) -> Tuple[bool, str]:
-    """Returns the most likely language detected by cld3"""
-    r = cld3.get_frequent_languages(s, 3)[
-        0]  # get_language is not so reliable: mixed languages content is not well detected
+    """Returns the most likely language detected by cld3.
+
+    :param s: String to be detected.
+    :param proportion: Proportion.
+    :return: e.g. ``(True, 'en')``
+    """
+    # get_language() is not so reliable: mixed languages content is not well detected
+    r = cld3.get_frequent_languages(s, 3)[0]
     return r.is_reliable and r.proportion > proportion, r.language
 
 
-def _try_despite_of_errors(req_func, exception_classes, times=4):
-    """Returns the requests_func() despite of at most "times" requests connection errors."""
+def _try_despite_of_errors(req_func, exception_classes, times: int = 4):
+    """Returns the req_func() despite of at most ``times`` requests connection errors.
+    :param req_func: Requests function.
+    :param exception_classes: Exception classes.
+    :param times: Maximum number of times.
+    :return: ``req_func``
+    """
     assert times > 0
     for i in count(1):
         try:

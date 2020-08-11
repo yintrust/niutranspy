@@ -7,9 +7,9 @@ import threading
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 
-from backend import _TranslationBackend
-from utils import _try_despite_of_errors
-from constants import NIUTRANS_API_URL, NIUTRANS_XML_API_URL
+from niutranspy.backend import _TranslationBackend
+from niutranspy.utils import _try_despite_of_errors
+from niutranspy.constants import NIUTRANS_API_URL, NIUTRANS_XML_API_URL
 
 _lock = threading.RLock()
 _caches = {}

@@ -1,13 +1,13 @@
 import logging
 import threading
-from os import path
+from os import path, makedirs
 from typing import Union
 
 from opencc import OpenCC
 from bs4 import BeautifulSoup
 from bs4.element import Tag, NavigableString
 
-from utils import html_to_text, _load_dicts, get_lang
+from niutranspy.utils import html_to_text, _load_dicts, get_lang
 
 _log = logging.getLogger(__name__)
 _lock = threading.RLock()
@@ -15,6 +15,7 @@ _lock = threading.RLock()
 
 class Translator(object):
     CACHE_FILE_NAME = 'translation/cache.db'
+    SUGGESTION_FILE_NAME = 'translation/suggestion.txt'
     LANGUAGES = {'ar', 'zh', 'en', 'ko', 'pt', 'es', 'de', 'da', 'fr', 'fi', 'sv', 'he', 'nl', 'ru', 'th', 'ja'}
 
     def __init__(self, cache_dir: str, niutrans):
@@ -24,7 +25,7 @@ class Translator(object):
         self._niutrans = niutrans
         dic = {}
         valid_languages = {'X', '='} | Translator.LANGUAGES
-        with open(path.join(cache_dir, 'translation/suggestion.txt')) as f:
+        with open(path.join(cache_dir, self.SUGGESTION_FILE_NAME)) as f:
             for i, l in enumerate(f):
                 lang, s = l.strip().split(' ', maxsplit=1)
                 assert lang in valid_languages, f'{i + 1}: invalid language: {lang}'

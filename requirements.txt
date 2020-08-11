@@ -3,5 +3,7 @@ requests
 OpenCC
 sqlitedict
 Cython
+pytest
+Sphinx
 # cld3
 https://github.com/Elizafox/cld3/archive/master.zip
